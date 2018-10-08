@@ -41,19 +41,19 @@ RUN update-alternatives --set cpp /usr/bin/clang++
 
 # Build static OpenSSL
 ENV SSL_VER=1.0.2o \
-    PREFIX=/usr/local \
-    PATH=/usr/local/bin:$PATH
+	PREFIX=/usr/local \
+	PATH=/usr/local/bin:$PATH
 
 RUN curl -sL http://www.openssl.org/source/openssl-$SSL_VER.tar.gz | tar xz && \
-    cd openssl-$SSL_VER && \
-    ./Configure no-shared --prefix=$PREFIX --openssldir=$PREFIX/ssl no-zlib linux-x86_64 -fPIC && \
-    make depend 2> /dev/null && make -j$(nproc) && make install && \
-    cd .. && rm -rf openssl-$SSL_VER
-	
+	cd openssl-$SSL_VER && \
+	./Configure no-shared --prefix=$PREFIX --openssldir=$PREFIX/ssl no-zlib linux-x86_64 -fPIC && \
+	make depend 2> /dev/null && make -j$(nproc) && make install && \
+	cd .. && rm -rf openssl-$SSL_VER
+
 ENV OPENSSL_LIB_DIR=$PREFIX/lib \
-    OPENSSL_INCLUDE_DIR=$PREFIX/include \
-    OPENSSL_DIR=$PREFIX \
-    OPENSSL_STATIC=1
+	OPENSSL_INCLUDE_DIR=$PREFIX/include \
+	OPENSSL_DIR=$PREFIX \
+	OPENSSL_STATIC=1
 
 # Build libc++
 ENV CXX="clang++ -fPIC -i/compat/glibc_version.h -I/compat"
@@ -71,16 +71,16 @@ RUN mkdir /libcpp && \
 	mkdir build && \
 	cd build && \
 	cmake -G "Unix Makefiles" \ 
-        -DLIBCXX_ENABLE_SHARED=NO \
-        -DLIBCXX_INCLUDE_BENCHMARKS=NO \
-        -DLIBCXX_ENABLE_STATIC=YES \             
-        -DLIBCXXABI_ENABLE_SHARED=NO \             
-        -DLIBCXXABI_ENABLE_STATIC=YES \           
-		-DLIBCXX_ENABLE_STATIC_ABI_LIBRARY=ON \
-        -DLIBCXX_ENABLE_EXPERIMENTAL_LIBRARY=YES \
-		-DCMAKE_INSTALL_PREFIX=/usr/ \
-		-DCMAKE_BUILD_TYPE=Release \
-		/libcpp/llvm && \
+	-DLIBCXX_ENABLE_SHARED=NO \
+	-DLIBCXX_INCLUDE_BENCHMARKS=NO \
+	-DLIBCXX_ENABLE_STATIC=YES \             
+	-DLIBCXXABI_ENABLE_SHARED=NO \             
+	-DLIBCXXABI_ENABLE_STATIC=YES \           
+	-DLIBCXX_ENABLE_STATIC_ABI_LIBRARY=ON \
+	-DLIBCXX_ENABLE_EXPERIMENTAL_LIBRARY=YES \
+	-DCMAKE_INSTALL_PREFIX=/usr/ \
+	-DCMAKE_BUILD_TYPE=Release \
+	/libcpp/llvm && \
 	make cxx && \
 	make install-cxx install-cxxabi && \
 	cp /libcpp/llvm/projects/libcxxabi/include/* /usr/include/c++/v1/ && \
@@ -92,3 +92,7 @@ RUN objcopy --redefine-syms=/compat/glibc_version.redef /usr/local/lib/libcrypto
 
 # Get breakpad symbol dumper 
 RUN wget https://github.com/sbx320/binaries/blob/master/dump_syms?raw=true -O /usr/bin/dump_syms && chmod +x /usr/bin/dump_syms
+
+RUN apt update && apt install -y \
+	xorg-dev \
+	libgtk-3-dev

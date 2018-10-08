@@ -95,4 +95,5 @@ RUN wget https://github.com/sbx320/binaries/blob/master/dump_syms?raw=true -O /u
 
 RUN apt update && apt install -y \
 	xorg-dev \
-	libgtk-3-dev
+	libgtk-3-dev \
+	libpulse-dev

@@ -6,7 +6,8 @@ RUN apt-get update && apt-get install -y \
 	ca-certificates \
 	git \
 	wget \
-	ssh
+	ssh \ 
+	pkg-config
 
 # add toolchain repo
 RUN add-apt-repository ppa:ubuntu-toolchain-r/test

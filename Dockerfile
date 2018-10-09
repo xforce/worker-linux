@@ -13,12 +13,12 @@ RUN apt-get update && apt-get install -y \
 RUN add-apt-repository ppa:ubuntu-toolchain-r/test
 
 # add clang repo 
-RUN echo deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-6.0 main > /etc/apt/sources.list.d/llvm.list && wget -O - http://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add
+RUN echo deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-7 main > /etc/apt/sources.list.d/llvm.list && wget -O - http://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add
 
 # install compilation dependencies
 RUN apt-get update && apt-get install -y \
-	clang-6.0 \
-	clang-tidy-6.0 \
+	clang-7 \
+	clang-tidy-7 \
 	ninja-build \
 	make \
 	zsh \
@@ -29,8 +29,8 @@ RUN apt-get update && apt-get install -y \
 	libssl-dev && \
 	apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-6.0 100
-RUN update-alternatives --install /usr/bin/clang clang /usr/bin/clang-6.0 100
+RUN update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-7 100
+RUN update-alternatives --install /usr/bin/clang clang /usr/bin/clang-7 100
 RUN update-alternatives --install /usr/bin/cc cc /usr/bin/clang 40
 RUN update-alternatives --install /usr/bin/c++ c++ /usr/bin/clang++ 40
 RUN update-alternatives --install /usr/bin/cpp cpp /usr/bin/clang++ 40
@@ -56,17 +56,17 @@ ENV OPENSSL_LIB_DIR=$PREFIX/lib \
 	OPENSSL_STATIC=1
 
 # Build libc++
-ENV CXX="clang++ -fPIC -include /compat/glibc_version.h -I/compat"
+ENV CXX="clang++ -fPIC -std=c++17 -stdlib=libc++ -I/compat -include /compat/glibc_version.h"
 ENV CC="clang -fPIC -include /compat/glibc_version.h"
 ENV CPP="clang -E"
 ENV LINK="clang++ -L/compat"
 
 RUN mkdir /libcpp && \
 	cd /libcpp && \
-	svn co http://llvm.org/svn/llvm-project/llvm/branches/release_60 llvm && \
+	svn co http://llvm.org/svn/llvm-project/llvm/branches/release_70 llvm && \
 	cd llvm/projects && \
-	svn co http://llvm.org/svn/llvm-project/libcxx/branches/release_60 libcxx && \
-	svn co http://llvm.org/svn/llvm-project/libcxxabi/branches/release_60 libcxxabi && \
+	svn co http://llvm.org/svn/llvm-project/libcxx/branches/release_70 libcxx && \
+	svn co http://llvm.org/svn/llvm-project/libcxxabi/branches/release_70 libcxxabi && \
 	cd .. && \
 	mkdir build && \
 	cd build && \

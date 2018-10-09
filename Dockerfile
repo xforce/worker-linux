@@ -63,10 +63,10 @@ ENV LINK="clang++ -L/compat"
 
 RUN mkdir /libcpp && \
 	cd /libcpp && \
-	svn co http://llvm.org/svn/llvm-project/llvm/branches/release_70 llvm && \
+	svn co http://llvm.org/svn/llvm-project/llvm/branches/release_60 llvm && \
 	cd llvm/projects && \
-	svn co http://llvm.org/svn/llvm-project/libcxx/branches/release_70 libcxx && \
-	svn co http://llvm.org/svn/llvm-project/libcxxabi/branches/release_70 libcxxabi && \
+	svn co http://llvm.org/svn/llvm-project/libcxx/branches/release_60 libcxx && \
+	svn co http://llvm.org/svn/llvm-project/libcxxabi/branches/release_60 libcxxabi && \
 	cd .. && \
 	mkdir build && \
 	cd build && \

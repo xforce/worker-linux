@@ -56,7 +56,7 @@ ENV OPENSSL_LIB_DIR=$PREFIX/lib \
 	OPENSSL_STATIC=1
 
 # Build libc++
-ENV CXX="clang++ -fPIC -std=c++17 -stdlib=libc++ -I/compat -include /compat/glibc_version.h"
+ENV CXX="clang++ -fPIC -std=c++17 -I/compat -include /compat/glibc_version.h"
 ENV CC="clang -fPIC -include /compat/glibc_version.h"
 ENV CPP="clang -E"
 ENV LINK="clang++ -L/compat"
@@ -85,6 +85,8 @@ RUN mkdir /libcpp && \
 	make install-cxx install-cxxabi && \
 	cp /libcpp/llvm/projects/libcxxabi/include/* /usr/include/c++/v1/ && \
 	rm -rf /libcpp
+
+ENV CXX="clang++ -fPIC -std=c++17 -stdlib=libc++ -I/compat -include /compat/glibc_version.h"
 
 # Prepare static libs 
 RUN objcopy --redefine-syms=/compat/glibc_version.redef /usr/local/lib/libssl.a /compat/libssl.a

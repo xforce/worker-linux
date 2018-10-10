@@ -56,10 +56,8 @@ ENV OPENSSL_LIB_DIR=$PREFIX/lib \
 	OPENSSL_STATIC=1
 
 # Build libc++
-ENV CXX="clang++ -fPIC -std=c++17 -I/compat -include /compat/glibc_version.h"
-ENV CC="clang -fPIC -include /compat/glibc_version.h"
-ENV CPP="clang -E"
-ENV LINK="clang++ -L/compat"
+ENV CXX=clang++
+ENV CC=clang
 
 RUN mkdir /libcpp && \
 	cd /libcpp && \
@@ -77,8 +75,8 @@ RUN mkdir /libcpp && \
 	-DLIBCXXABI_ENABLE_SHARED=NO \             
 	-DLIBCXXABI_ENABLE_STATIC=YES \           
 	-DLIBCXX_ENABLE_STATIC_ABI_LIBRARY=ON \
-	-DLIBCXX_ENABLE_EXPERIMENTAL_LIBRARY=YES \
-	-DCMAKE_INSTALL_PREFIX=/usr/ \
+	-DLIBCXX_ENABLE_EXPERIMENTAL_LIBRARY=On \
+	-DCMAKE_INSTALL_PREFIX=/usr \
 	-DCMAKE_BUILD_TYPE=Release \
 	/libcpp/llvm && \
 	make cxx && \
@@ -86,7 +84,10 @@ RUN mkdir /libcpp && \
 	cp /libcpp/llvm/projects/libcxxabi/include/* /usr/include/c++/v1/ && \
 	rm -rf /libcpp
 
-ENV CXX="clang++ -fPIC -std=c++17 -stdlib=libc++ -I/compat -include /compat/glibc_version.h"
+ENV CXX="clang++ -fPIC -I/compat -include /compat/glibc_version.h"
+ENV CC="clang -fPIC -include /compat/glibc_version.h"
+ENV CPP="clang -E"
+ENV LINK="clang++ -L/compat"
 
 # Prepare static libs 
 RUN objcopy --redefine-syms=/compat/glibc_version.redef /usr/local/lib/libssl.a /compat/libssl.a

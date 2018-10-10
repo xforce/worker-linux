@@ -100,4 +100,6 @@ RUN apt update && apt install -y \
 	xorg-dev \
 	libgtk-3-dev \
 	libpulse-dev \
-	libasound2-dev
+	libasound2-dev \
+	libnss3 \
+	libnspr4

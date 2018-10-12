@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:16.04
 ADD . /compat
 
 RUN apt-get update && apt-get install -y \
@@ -13,7 +13,9 @@ RUN apt-get update && apt-get install -y \
 RUN add-apt-repository ppa:ubuntu-toolchain-r/test
 
 # add clang repo 
-RUN echo deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-7 main > /etc/apt/sources.list.d/llvm.list && wget -O - http://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add
+RUN echo deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-7 main > /etc/apt/sources.list.d/llvm.list
+RUN wget http://apt.llvm.org/llvm-snapshot.gpg.key
+RUN apt-key add llvm-snapshot.gpg.key
 
 # install compilation dependencies
 RUN apt-get update && apt-get install -y \
@@ -38,6 +40,16 @@ RUN update-alternatives --install /usr/bin/cpp cpp /usr/bin/clang++ 40
 RUN update-alternatives --set cc /usr/bin/clang
 RUN update-alternatives --set c++ /usr/bin/clang++
 RUN update-alternatives --set cpp /usr/bin/clang++
+
+RUN cd /usr/local/src \ 
+    && wget https://cmake.org/files/v3.4/cmake-3.4.3.tar.gz \
+    && tar xvf cmake-3.4.3.tar.gz \ 
+    && cd cmake-3.4.3 \
+    && ./bootstrap \
+    && make \
+    && make install \
+    && cd .. \
+    && rm -rf cmake*
 
 # Build static OpenSSL
 ENV SSL_VER=1.0.2o \
